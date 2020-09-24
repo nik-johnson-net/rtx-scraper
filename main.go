@@ -63,6 +63,16 @@ func main() {
 			From:   "rtx-scraper@jnstw.net",
 			To:     "nik@nikjohnson.net",
 		},
+		&smtp.SMTP{
+			Server: "smtp.echo1.jnstw.net:25",
+			From:   "rtx-scraper@jnstw.net",
+			To:     "joe@indra.com",
+		},
+		&smtp.SMTP{
+			Server: "smtp.echo1.jnstw.net:25",
+			From:   "rtx-scraper@jnstw.net",
+			To:     "seak789@yahoo.com",
+		},
 	}
 
 	pollers := []PollEntry{
