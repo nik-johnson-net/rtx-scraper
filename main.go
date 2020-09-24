@@ -53,25 +53,35 @@ func (s *SetUserAgentTransport) RoundTrip(r *http.Request) (*http.Response, erro
 
 func main() {
 	notifiers := []notifiers.Notifier{
+		// Nik (Phone)
 		&smtp.SMTP{
 			Server: "smtp.echo1.jnstw.net:25",
 			From:   "rtx-scraper@jnstw.net",
 			To:     "9793938339@txt.att.net",
 		},
+		// Nik
 		&smtp.SMTP{
 			Server: "smtp.echo1.jnstw.net:25",
 			From:   "rtx-scraper@jnstw.net",
 			To:     "nik@nikjohnson.net",
 		},
+		// Joe (Gunsjoe)
 		&smtp.SMTP{
 			Server: "smtp.echo1.jnstw.net:25",
 			From:   "rtx-scraper@jnstw.net",
 			To:     "joe@indra.com",
 		},
+		// TuggerNutts
 		&smtp.SMTP{
 			Server: "smtp.echo1.jnstw.net:25",
 			From:   "rtx-scraper@jnstw.net",
 			To:     "seak789@yahoo.com",
+		},
+		// Emerson
+		&smtp.SMTP{
+			Server: "smtp.echo1.jnstw.net:25",
+			From:   "rtx-scraper@jnstw.net",
+			To:     "squidboy54@me.com",
 		},
 	}
 
