@@ -83,6 +83,12 @@ func main() {
 			From:   "rtx-scraper@jnstw.net",
 			To:     "squidboy54@me.com",
 		},
+		// Travis
+		&smtp.SMTP{
+			Server: "smtp.echo1.jnstw.net:25",
+			From:   "rtx-scraper@jnstw.net",
+			To:     "tmcarr89@gmail.com",
+		},
 	}
 
 	pollers := []PollEntry{
