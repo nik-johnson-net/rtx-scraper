@@ -20,25 +20,28 @@ type PollEntry struct {
 	lastValue bool
 }
 
-func (p *PollEntry) Poll(ctx context.Context, client *http.Client, sendNotification bool) {
+func (p *PollEntry) Poll(ctx context.Context, client *http.Client, sendNotification bool) (bool, error) {
 	log.Printf("Checking %s for %s availability", p.store.Store(), p.store.Product())
 	instock, err := p.store.CheckAvailability(ctx, client)
 	if err != nil {
 		log.Printf("poll: failed to check availability: %s", err)
-		return
+		return false, err
 	}
 
-	if sendNotification && instock != p.lastValue && p.notifier != nil {
+	shouldNotify := sendNotification && (instock != p.lastValue)
+	p.lastValue = instock
+
+	if shouldNotify && (p.notifier != nil) {
 		log.Printf("%s - %s availability changed to %v", p.store.Store(), p.store.Product(), instock)
 		for _, notifier := range p.notifier {
 			err = notifier.Notify(ctx, p.store.Product(), p.store.Store(), p.store.URL(), instock)
 			if err != nil {
 				log.Printf("poll: failed to notify: %s", err)
-				return
 			}
 		}
 	}
-	p.lastValue = instock
+
+	return shouldNotify, nil
 }
 
 type SetUserAgentTransport struct {
