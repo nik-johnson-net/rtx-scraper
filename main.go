@@ -2,8 +2,11 @@ package main
 
 import (
 	"context"
+	"flag"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/nik-johnson-net/rtx-scraper/notifiers"
@@ -13,6 +16,15 @@ import (
 )
 
 const UserAgent string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0"
+
+var tripper = &SetUserAgentTransport{
+	UserAgent: UserAgent,
+}
+
+var client = &http.Client{
+	Transport: tripper,
+	Timeout:   5 * time.Second,
+}
 
 type PollEntry struct {
 	store     stores.Store
@@ -76,14 +88,23 @@ func main() {
 		},
 	}
 
-	tripper := &SetUserAgentTransport{
-		UserAgent: UserAgent,
+	// Flag parsing
+
+	testNotifierFlag := flag.Int("test-notifier", 0, fmt.Sprintf("Which notifier to send [0..%d]", len(notifiers)-1))
+
+	flag.Parse()
+
+	if flagSet("test-notifier") {
+		err := testNotifier(notifiers[*testNotifierFlag])
+		if err != nil {
+			log.Printf("Testing of notifier %d failed: %s\n", *testNotifierFlag, err)
+			os.Exit(1)
+		}
+		log.Printf("Successfully tested notifier %d\n", *testNotifierFlag)
+		os.Exit(0)
 	}
 
-	client := &http.Client{
-		Transport: tripper,
-		Timeout:   5 * time.Second,
-	}
+	// Main
 
 	for _, store := range pollers {
 		store.Poll(context.Background(), client, false)
@@ -100,4 +121,24 @@ func main() {
 
 		time.Sleep(10 * time.Second)
 	}
+}
+
+func flagSet(name string) bool {
+	found := false
+	flag.Visit(func(f *flag.Flag) {
+		if f.Name == name {
+			found = true
+		}
+	})
+	return found
+}
+
+func testNotifier(notifier notifiers.Notifier) error {
+	if err := notifier.Notify(context.Background(), "TestProduct", "TestStore", "https://this-is-a-test/", true); err != nil {
+		return err
+	}
+	if err := notifier.Notify(context.Background(), "TestProduct", "TestStore", "https://this-is-a-test/", false); err != nil {
+		return err
+	}
+	return nil
 }
