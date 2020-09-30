@@ -90,7 +90,7 @@ func (s *Store) CheckAvailability(ctx context.Context, client *http.Client) (boo
 	for _, product := range products {
 		if product.SkuId == stringSku {
 			log.Printf("bestbuy: found %s (%d) state %s", s.ProductName, s.SkuID, product.ButtonState)
-			return product.ButtonState != "SOLD_OUT", nil
+			return product.ButtonState == "ADD_TO_CART", nil
 		}
 	}
 
