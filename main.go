@@ -86,11 +86,20 @@ func main() {
 			},
 			notifier: notifiers,
 		},
+		{
+			store: &nvidia.StoreAPI{
+				CheckoutPage: "https://www.nvidia.com/en-us/geforce/graphics-cards/30-series/rtx-3080/",
+				ID:           "5438481700",
+				ProductName:  "RTX 3080",
+			},
+			notifier: notifiers,
+		},
 	}
 
 	// Flag parsing
 
 	testNotifierFlag := flag.Int("test-notifier", 0, fmt.Sprintf("Which notifier to send [0..%d]", len(notifiers)-1))
+	testPollerFlag := flag.Int("test-poller", 0, fmt.Sprintf("Which poller to test [0..%d]", len(pollers)-1))
 
 	flag.Parse()
 
@@ -101,6 +110,16 @@ func main() {
 			os.Exit(1)
 		}
 		log.Printf("Successfully tested notifier %d\n", *testNotifierFlag)
+		os.Exit(0)
+	}
+
+	if flagSet("test-poller") {
+		err := testPoller(pollers[*testPollerFlag])
+		if err != nil {
+			log.Printf("Testing of poller %d failed: %s\n", *testPollerFlag, err)
+			os.Exit(1)
+		}
+		log.Printf("Successfully tested poller %d\n", *testPollerFlag)
 		os.Exit(0)
 	}
 
@@ -141,4 +160,12 @@ func testNotifier(notifier notifiers.Notifier) error {
 		return err
 	}
 	return nil
+}
+
+func testPoller(poller PollEntry) error {
+	result, err := poller.Poll(context.Background(), client, false)
+	if err == nil {
+		log.Printf("Poller returned %v\n", result)
+	}
+	return err
 }
