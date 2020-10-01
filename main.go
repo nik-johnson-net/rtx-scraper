@@ -23,7 +23,7 @@ var tripper = &SetUserAgentTransport{
 
 var client = &http.Client{
 	Transport: tripper,
-	Timeout:   5 * time.Second,
+	Timeout:   10 * time.Second,
 }
 
 type PollEntry struct {

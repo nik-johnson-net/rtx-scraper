@@ -23,7 +23,7 @@ func (s *StoreAPI) Product() string {
 }
 
 func (s *StoreAPI) Store() string {
-	return "NVIDIA Store"
+	return "NVIDIA Store (API)"
 }
 
 func (s *StoreAPI) URL() string {
