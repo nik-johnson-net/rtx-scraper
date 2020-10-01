@@ -53,8 +53,10 @@ func (s *StoreAPI) CheckAvailability(ctx context.Context, client *http.Client) (
 		return false, err
 	}
 
-	stockValue := storeResponse.Products.Product[0].InventoryStatus.ProductIsInStock
-	inStock, err := strconv.ParseBool(stockValue)
+	inventoryStatus := storeResponse.Products.Product[0].InventoryStatus
+	inStock, err := strconv.ParseBool(inventoryStatus.ProductIsInStock)
+
+	log.Printf("nvidia-api: found %s status %s", s.ProductName, inventoryStatus.Status)
 
 	return inStock, err
 }
@@ -77,4 +79,5 @@ type nvidiaStoreApiProduct struct {
 
 type nvidiaStoreApiInventoryStatus struct {
 	ProductIsInStock string `json:"productIsInStock"`
+	Status           string `json:"status"`
 }
