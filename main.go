@@ -68,7 +68,7 @@ func (s *SetUserAgentTransport) RoundTrip(r *http.Request) (*http.Response, erro
 func main() {
 	notifiers := []notifiers.Notifier{}
 
-	pollers := []PollEntry{
+	pollers := []*PollEntry{
 		{
 			store: &bestbuy.Store{
 				ProductName: "RTX 3080",
@@ -162,7 +162,7 @@ func testNotifier(notifier notifiers.Notifier) error {
 	return nil
 }
 
-func testPoller(poller PollEntry) error {
+func testPoller(poller *PollEntry) error {
 	result, err := poller.Poll(context.Background(), client, false)
 	if err == nil {
 		log.Printf("Poller returned %v\n", result)
