@@ -66,7 +66,9 @@ func (s *SetUserAgentTransport) RoundTrip(r *http.Request) (*http.Response, erro
 }
 
 func main() {
-	notifiers := []notifiers.Notifier{}
+	notifiersList := []notifiers.Notifier{}
+
+	notifyList2 := []notifiers.Notifier{}
 
 	pollers := []*PollEntry{
 		{
@@ -76,7 +78,7 @@ func main() {
 				Zip:         "80020",
 				StoreID:     186,
 			},
-			notifier: notifiers,
+			notifier: notifiersList,
 		},
 		{
 			store: &nvidia.Store{
@@ -84,7 +86,7 @@ func main() {
 				ProductSKU:   30042,
 				SearchString: "RTX%203080",
 			},
-			notifier: notifiers,
+			notifier: notifiersList,
 		},
 		{
 			store: &nvidia.StoreAPI{
@@ -92,19 +94,29 @@ func main() {
 				ID:           "5438481700",
 				ProductName:  "RTX 3080",
 			},
-			notifier: notifiers,
+			notifier: notifiersList,
+		},
+		// Xbox for Someone Else
+		{
+			store: &bestbuy.Store{
+				ProductName: "Xbox Series X",
+				SkuID:       6428324,
+				Zip:         "80020",
+				StoreID:     186,
+			},
+			notifier: notifyList2,
 		},
 	}
 
 	// Flag parsing
 
-	testNotifierFlag := flag.Int("test-notifier", 0, fmt.Sprintf("Which notifier to send [0..%d]", len(notifiers)-1))
+	testNotifierFlag := flag.Int("test-notifier", 0, fmt.Sprintf("Which notifier to send [0..%d]", len(notifiersList)-1))
 	testPollerFlag := flag.Int("test-poller", 0, fmt.Sprintf("Which poller to test [0..%d]", len(pollers)-1))
 
 	flag.Parse()
 
 	if flagSet("test-notifier") {
-		err := testNotifier(notifiers[*testNotifierFlag])
+		err := testNotifier(notifiersList[*testNotifierFlag])
 		if err != nil {
 			log.Printf("Testing of notifier %d failed: %s\n", *testNotifierFlag, err)
 			os.Exit(1)

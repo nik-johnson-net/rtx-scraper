@@ -55,8 +55,9 @@ func (s *StoreAPI) CheckAvailability(ctx context.Context, client *http.Client) (
 
 	inventoryStatus := storeResponse.Products.Product[0].InventoryStatus
 	inStock, err := strconv.ParseBool(inventoryStatus.ProductIsInStock)
+	inStock = inStock && inventoryStatus.Status != "PRODUCT_INVENTORY_OUT_OF_STOCK"
 
-	log.Printf("nvidia-api: found %s status %s", s.ProductName, inventoryStatus.Status)
+	log.Printf("nvidia-api: found %s status %s (ProductIsInStock %s)", s.ProductName, inventoryStatus.Status, inventoryStatus.ProductIsInStock)
 
 	return inStock, err
 }
